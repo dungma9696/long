@@ -16,6 +16,7 @@ import {
 import { BookingsService } from './bookings.service';
 import { CreateBookingDto } from './dto/create-booking.dto';
 import { JwtAuthGuard } from '../auth/passport/jwt-auth.guard';
+import { ApiResponseData } from 'src/common/bases/api-response';
 
 @ApiTags('Bookings')
 @ApiBearerAuth('JWT-auth')
@@ -31,30 +32,37 @@ export class BookingsController {
     description: 'The booking has been successfully created.',
   })
   @ApiResponse({ status: 400, description: 'Bad Request.' })
-  create(@Body() createBookingDto: CreateBookingDto, @Request() req) {
-    return this.bookingsService.create(createBookingDto, req.user.id);
+  async create(@Body() createBookingDto: CreateBookingDto, @Request() req) {
+    const result = await this.bookingsService.create(
+      createBookingDto,
+      req.user.id,
+    );
+    return ApiResponseData.ok(result, 'Booking created successfully', 201);
   }
 
   @Get('my-bookings')
   @ApiOperation({ summary: 'Get current user bookings' })
   @ApiResponse({ status: 200, description: 'Return user bookings.' })
-  getMyBookings(@Request() req) {
-    return this.bookingsService.getUserBookings(req.user.id);
+  async getMyBookings(@Request() req) {
+    const result = await this.bookingsService.getUserBookings(req.user.id);
+    return ApiResponseData.ok(result, 'User bookings retrieved successfully');
   }
 
   @Get('code/:bookingCode')
   @ApiOperation({ summary: 'Get booking by code' })
   @ApiResponse({ status: 200, description: 'Return the booking.' })
   @ApiResponse({ status: 404, description: 'Booking not found.' })
-  findByCode(@Param('bookingCode') bookingCode: string) {
-    return this.bookingsService.findByCode(bookingCode);
+  async findByCode(@Param('bookingCode') bookingCode: string) {
+    const result = await this.bookingsService.findByCode(bookingCode);
+    return ApiResponseData.ok(result, 'Booking retrieved successfully');
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get booking by id' })
   @ApiResponse({ status: 200, description: 'Return the booking.' })
   @ApiResponse({ status: 404, description: 'Booking not found.' })
-  findOne(@Param('id') id: string) {
-    return this.bookingsService.findOne(id);
+  async findOne(@Param('id') id: string) {
+    const result = await this.bookingsService.findOne(id);
+    return ApiResponseData.ok(result, 'Booking retrieved successfully');
   }
 }

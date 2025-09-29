@@ -15,6 +15,7 @@ import {
 } from '@nestjs/swagger';
 import { LoyaltyPointsService } from './loyalty-points.service';
 import { JwtAuthGuard } from '../auth/passport/jwt-auth.guard';
+import { ApiResponseData } from 'src/common/bases/api-response';
 
 @ApiTags('Loyalty Points')
 @ApiBearerAuth('JWT-auth')
@@ -26,15 +27,27 @@ export class LoyaltyPointsController {
   @Get('my-points')
   @ApiOperation({ summary: 'Get current user loyalty points' })
   @ApiResponse({ status: 200, description: 'Return user loyalty points.' })
-  getMyPoints(@Request() req) {
-    return this.loyaltyPointsService.getUserLoyaltyPoints(req.user.id);
+  async getMyPoints(@Request() req) {
+    const result = await this.loyaltyPointsService.getUserLoyaltyPoints(
+      req.user.id,
+    );
+    return ApiResponseData.ok(
+      result,
+      'User loyalty points retrieved successfully',
+    );
   }
 
   @Get('my-history')
   @ApiOperation({ summary: 'Get current user points history' })
   @ApiResponse({ status: 200, description: 'Return user points history.' })
-  getMyHistory(@Request() req) {
-    return this.loyaltyPointsService.getUserPointsHistory(req.user.id);
+  async getMyHistory(@Request() req) {
+    const result = await this.loyaltyPointsService.getUserPointsHistory(
+      req.user.id,
+    );
+    return ApiResponseData.ok(
+      result,
+      'User points history retrieved successfully',
+    );
   }
 
   @Get('top-users')
@@ -43,15 +56,20 @@ export class LoyaltyPointsController {
     status: 200,
     description: 'Return top users by loyalty points.',
   })
-  getTopUsers() {
-    return this.loyaltyPointsService.getTopUsers();
+  async getTopUsers() {
+    const result = await this.loyaltyPointsService.getTopUsers();
+    return ApiResponseData.ok(result, 'Top users retrieved successfully');
   }
 
   @Get(':userId')
   @ApiOperation({ summary: 'Get user loyalty points by ID' })
   @ApiResponse({ status: 200, description: 'Return user loyalty points.' })
   @ApiResponse({ status: 404, description: 'User loyalty points not found.' })
-  getUserPoints(@Param('userId') userId: string) {
-    return this.loyaltyPointsService.getUserLoyaltyPoints(userId);
+  async getUserPoints(@Param('userId') userId: string) {
+    const result = await this.loyaltyPointsService.getUserLoyaltyPoints(userId);
+    return ApiResponseData.ok(
+      result,
+      'User loyalty points retrieved successfully',
+    );
   }
 }

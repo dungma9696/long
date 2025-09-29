@@ -16,6 +16,7 @@ import {
 import { DiscountsService } from './discounts.service';
 import { CreateDiscountDto } from './dto/create-discount.dto';
 import { UpdateDiscountDto } from './dto/update-discount.dto';
+import { ApiResponseData } from 'src/common/bases/api-response';
 
 @ApiTags('Admin - Discounts')
 @ApiBearerAuth('JWT-auth')
@@ -30,23 +31,26 @@ export class AdminDiscountsController {
     description: 'The discount has been successfully created.',
   })
   @ApiResponse({ status: 400, description: 'Bad Request.' })
-  create(@Body() createDiscountDto: CreateDiscountDto) {
-    return this.discountsService.create(createDiscountDto);
+  async create(@Body() createDiscountDto: CreateDiscountDto) {
+    const result = await this.discountsService.create(createDiscountDto);
+    return ApiResponseData.ok(result, 'Discount created successfully', 201);
   }
 
   @Get()
   @ApiOperation({ summary: 'Get all discounts' })
   @ApiResponse({ status: 200, description: 'Return all discounts.' })
-  findAll() {
-    return this.discountsService.findAll();
+  async findAll() {
+    const result = await this.discountsService.findAll();
+    return ApiResponseData.ok(result, 'Discounts retrieved successfully');
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get discount by id' })
   @ApiResponse({ status: 200, description: 'Return the discount.' })
   @ApiResponse({ status: 404, description: 'Discount not found.' })
-  findOne(@Param('id') id: string) {
-    return this.discountsService.findOne(id);
+  async findOne(@Param('id') id: string) {
+    const result = await this.discountsService.findOne(id);
+    return ApiResponseData.ok(result, 'Discount retrieved successfully');
   }
 
   @Patch(':id')
@@ -56,11 +60,12 @@ export class AdminDiscountsController {
     description: 'The discount has been successfully updated.',
   })
   @ApiResponse({ status: 404, description: 'Discount not found.' })
-  update(
+  async update(
     @Param('id') id: string,
     @Body() updateDiscountDto: UpdateDiscountDto,
   ) {
-    return this.discountsService.update(id, updateDiscountDto);
+    const result = await this.discountsService.update(id, updateDiscountDto);
+    return ApiResponseData.ok(result, 'Discount updated successfully');
   }
 
   @Delete(':id')
@@ -70,7 +75,8 @@ export class AdminDiscountsController {
     description: 'The discount has been successfully deleted.',
   })
   @ApiResponse({ status: 404, description: 'Discount not found.' })
-  remove(@Param('id') id: string) {
-    return this.discountsService.remove(id);
+  async remove(@Param('id') id: string) {
+    await this.discountsService.remove(id);
+    return ApiResponseData.ok(true, 'Discount deleted successfully');
   }
 }

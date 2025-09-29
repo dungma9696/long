@@ -18,6 +18,7 @@ import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
 import { CreatePermissionDto } from './dto/create-permission.dto';
 import { UpdatePermissionDto } from './dto/update-permission.dto';
+import { ApiResponseData } from 'src/common/bases/api-response';
 
 @ApiTags('Admin - Roles & Permissions')
 @ApiBearerAuth('JWT-auth')
@@ -33,23 +34,27 @@ export class AdminRolesController {
     description: 'The permission has been successfully created.',
   })
   @ApiResponse({ status: 400, description: 'Bad Request.' })
-  createPermission(@Body() createPermissionDto: CreatePermissionDto) {
-    return this.rolesService.createPermission(createPermissionDto);
+  async createPermission(@Body() createPermissionDto: CreatePermissionDto) {
+    const result =
+      await this.rolesService.createPermission(createPermissionDto);
+    return ApiResponseData.ok(result, 'Permission created successfully', 201);
   }
 
   @Get('permissions')
   @ApiOperation({ summary: 'Get all permissions' })
   @ApiResponse({ status: 200, description: 'Return all permissions.' })
-  findAllPermissions() {
-    return this.rolesService.findAllPermissions();
+  async findAllPermissions() {
+    const result = await this.rolesService.findAllPermissions();
+    return ApiResponseData.ok(result, 'Permissions retrieved successfully');
   }
 
   @Get('permissions/:id')
   @ApiOperation({ summary: 'Get permission by id' })
   @ApiResponse({ status: 200, description: 'Return the permission.' })
   @ApiResponse({ status: 404, description: 'Permission not found.' })
-  findOnePermission(@Param('id') id: string) {
-    return this.rolesService.findOnePermission(id);
+  async findOnePermission(@Param('id') id: string) {
+    const result = await this.rolesService.findOnePermission(id);
+    return ApiResponseData.ok(result, 'Permission retrieved successfully');
   }
 
   @Patch('permissions/:id')
@@ -59,11 +64,15 @@ export class AdminRolesController {
     description: 'The permission has been successfully updated.',
   })
   @ApiResponse({ status: 404, description: 'Permission not found.' })
-  updatePermission(
+  async updatePermission(
     @Param('id') id: string,
     @Body() updatePermissionDto: UpdatePermissionDto,
   ) {
-    return this.rolesService.updatePermission(id, updatePermissionDto);
+    const result = await this.rolesService.updatePermission(
+      id,
+      updatePermissionDto,
+    );
+    return ApiResponseData.ok(result, 'Permission updated successfully');
   }
 
   @Delete('permissions/:id')
@@ -73,8 +82,9 @@ export class AdminRolesController {
     description: 'The permission has been successfully deleted.',
   })
   @ApiResponse({ status: 404, description: 'Permission not found.' })
-  removePermission(@Param('id') id: string) {
-    return this.rolesService.removePermission(id);
+  async removePermission(@Param('id') id: string) {
+    await this.rolesService.removePermission(id);
+    return ApiResponseData.ok(true, 'Permission deleted successfully');
   }
 
   // Role endpoints
@@ -85,23 +95,26 @@ export class AdminRolesController {
     description: 'The role has been successfully created.',
   })
   @ApiResponse({ status: 400, description: 'Bad Request.' })
-  create(@Body() createRoleDto: CreateRoleDto) {
-    return this.rolesService.create(createRoleDto);
+  async create(@Body() createRoleDto: CreateRoleDto) {
+    const result = await this.rolesService.create(createRoleDto);
+    return ApiResponseData.ok(result, 'Role created successfully', 201);
   }
 
   @Get()
   @ApiOperation({ summary: 'Get all roles' })
   @ApiResponse({ status: 200, description: 'Return all roles.' })
-  findAll() {
-    return this.rolesService.findAll();
+  async findAll() {
+    const result = await this.rolesService.findAll();
+    return ApiResponseData.ok(result, 'Roles retrieved successfully');
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get role by id' })
   @ApiResponse({ status: 200, description: 'Return the role.' })
   @ApiResponse({ status: 404, description: 'Role not found.' })
-  findOne(@Param('id') id: string) {
-    return this.rolesService.findOne(id);
+  async findOne(@Param('id') id: string) {
+    const result = await this.rolesService.findOne(id);
+    return ApiResponseData.ok(result, 'Role retrieved successfully');
   }
 
   @Patch(':id')
@@ -111,8 +124,9 @@ export class AdminRolesController {
     description: 'The role has been successfully updated.',
   })
   @ApiResponse({ status: 404, description: 'Role not found.' })
-  update(@Param('id') id: string, @Body() updateRoleDto: UpdateRoleDto) {
-    return this.rolesService.update(id, updateRoleDto);
+  async update(@Param('id') id: string, @Body() updateRoleDto: UpdateRoleDto) {
+    const result = await this.rolesService.update(id, updateRoleDto);
+    return ApiResponseData.ok(result, 'Role updated successfully');
   }
 
   @Patch(':id/permissions')
@@ -122,11 +136,12 @@ export class AdminRolesController {
     description: 'Permissions have been successfully assigned.',
   })
   @ApiResponse({ status: 404, description: 'Role not found.' })
-  assignPermissions(
+  async assignPermissions(
     @Param('id') id: string,
     @Body('permissionIds') permissionIds: string[],
   ) {
-    return this.rolesService.assignPermissions(id, permissionIds);
+    const result = await this.rolesService.assignPermissions(id, permissionIds);
+    return ApiResponseData.ok(result, 'Permissions assigned successfully');
   }
 
   @Delete(':id')
@@ -136,7 +151,8 @@ export class AdminRolesController {
     description: 'The role has been successfully deleted.',
   })
   @ApiResponse({ status: 404, description: 'Role not found.' })
-  remove(@Param('id') id: string) {
-    return this.rolesService.remove(id);
+  async remove(@Param('id') id: string) {
+    await this.rolesService.remove(id);
+    return ApiResponseData.ok(true, 'Role deleted successfully');
   }
 }

@@ -18,6 +18,7 @@ import { ShowtimesService } from './showtimes.service';
 import { CreateShowtimeDto } from './dto/create-showtime.dto';
 import { UpdateShowtimeDto } from './dto/update-showtime.dto';
 import { FindAllShowtimesDto } from './dto/find-all-showtimes.dto';
+import { ApiResponseData } from 'src/common/bases/api-response';
 
 @ApiTags('Admin - Showtimes')
 @ApiBearerAuth('JWT-auth')
@@ -32,8 +33,9 @@ export class AdminShowtimesController {
     description: 'The showtime has been successfully created.',
   })
   @ApiResponse({ status: 400, description: 'Bad Request.' })
-  create(@Body() createShowtimeDto: CreateShowtimeDto) {
-    return this.showtimesService.create(createShowtimeDto);
+  async create(@Body() createShowtimeDto: CreateShowtimeDto) {
+    const result = await this.showtimesService.create(createShowtimeDto);
+    return ApiResponseData.ok(result, 'Showtime created successfully', 201);
   }
 
   @Get()
@@ -42,16 +44,18 @@ export class AdminShowtimesController {
     status: 200,
     description: 'Return all showtimes with pagination.',
   })
-  findAll(@Query() query: FindAllShowtimesDto) {
-    return this.showtimesService.findAll(query);
+  async findAll(@Query() query: FindAllShowtimesDto) {
+    const result = await this.showtimesService.findAll(query);
+    return ApiResponseData.ok(result, 'Showtimes retrieved successfully');
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get showtime by id' })
   @ApiResponse({ status: 200, description: 'Return the showtime.' })
   @ApiResponse({ status: 404, description: 'Showtime not found.' })
-  findOne(@Param('id') id: string) {
-    return this.showtimesService.findOne(id);
+  async findOne(@Param('id') id: string) {
+    const result = await this.showtimesService.findOne(id);
+    return ApiResponseData.ok(result, 'Showtime retrieved successfully');
   }
 
   @Patch(':id')
@@ -61,11 +65,12 @@ export class AdminShowtimesController {
     description: 'The showtime has been successfully updated.',
   })
   @ApiResponse({ status: 404, description: 'Showtime not found.' })
-  update(
+  async update(
     @Param('id') id: string,
     @Body() updateShowtimeDto: UpdateShowtimeDto,
   ) {
-    return this.showtimesService.update(id, updateShowtimeDto);
+    const result = await this.showtimesService.update(id, updateShowtimeDto);
+    return ApiResponseData.ok(result, 'Showtime updated successfully');
   }
 
   @Delete(':id')
@@ -75,7 +80,8 @@ export class AdminShowtimesController {
     description: 'The showtime has been successfully deleted.',
   })
   @ApiResponse({ status: 404, description: 'Showtime not found.' })
-  remove(@Param('id') id: string) {
-    return this.showtimesService.remove(id);
+  async remove(@Param('id') id: string) {
+    await this.showtimesService.remove(id);
+    return ApiResponseData.ok(true, 'Showtime deleted successfully');
   }
 }

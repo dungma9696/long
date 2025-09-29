@@ -18,6 +18,7 @@ import { NewsService } from './news.service';
 import { CreateNewsDto } from './dto/create-news.dto';
 import { UpdateNewsDto } from './dto/update-news.dto';
 import { FindAllNewsDto } from './dto/find-all-news.dto';
+import { ApiResponseData } from 'src/common/bases/api-response';
 
 @ApiTags('Admin - News')
 @ApiBearerAuth('JWT-auth')
@@ -32,23 +33,26 @@ export class AdminNewsController {
     description: 'The news has been successfully created.',
   })
   @ApiResponse({ status: 400, description: 'Bad Request.' })
-  create(@Body() createNewsDto: CreateNewsDto) {
-    return this.newsService.create(createNewsDto);
+  async create(@Body() createNewsDto: CreateNewsDto) {
+    const result = await this.newsService.create(createNewsDto);
+    return ApiResponseData.ok(result, 'News created successfully', 201);
   }
 
   @Get()
   @ApiOperation({ summary: 'Get all news with filters' })
   @ApiResponse({ status: 200, description: 'Return all news with pagination.' })
-  findAll(@Query() query: FindAllNewsDto) {
-    return this.newsService.findAll(query);
+  async findAll(@Query() query: FindAllNewsDto) {
+    const result = await this.newsService.findAll(query);
+    return ApiResponseData.ok(result, 'News retrieved successfully');
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get news by id' })
   @ApiResponse({ status: 200, description: 'Return the news.' })
   @ApiResponse({ status: 404, description: 'News not found.' })
-  findOne(@Param('id') id: string) {
-    return this.newsService.findOne(id);
+  async findOne(@Param('id') id: string) {
+    const result = await this.newsService.findOne(id);
+    return ApiResponseData.ok(result, 'News retrieved successfully');
   }
 
   @Patch(':id')
@@ -58,8 +62,9 @@ export class AdminNewsController {
     description: 'The news has been successfully updated.',
   })
   @ApiResponse({ status: 404, description: 'News not found.' })
-  update(@Param('id') id: string, @Body() updateNewsDto: UpdateNewsDto) {
-    return this.newsService.update(id, updateNewsDto);
+  async update(@Param('id') id: string, @Body() updateNewsDto: UpdateNewsDto) {
+    const result = await this.newsService.update(id, updateNewsDto);
+    return ApiResponseData.ok(result, 'News updated successfully');
   }
 
   @Delete(':id')
@@ -69,7 +74,8 @@ export class AdminNewsController {
     description: 'The news has been successfully deleted.',
   })
   @ApiResponse({ status: 404, description: 'News not found.' })
-  remove(@Param('id') id: string) {
-    return this.newsService.remove(id);
+  async remove(@Param('id') id: string) {
+    await this.newsService.remove(id);
+    return ApiResponseData.ok(true, 'News deleted successfully');
   }
 }

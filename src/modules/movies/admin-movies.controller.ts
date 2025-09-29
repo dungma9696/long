@@ -18,6 +18,7 @@ import { MoviesService } from './movies.service';
 import { CreateMovieDto } from './dto/create-movie.dto';
 import { UpdateMovieDto } from './dto/update-movie.dto';
 import { FindAllMoviesDto } from './dto/find-all-movies.dto';
+import { ApiResponseData } from 'src/common/bases/api-response';
 
 @ApiTags('Admin - Movies')
 @ApiBearerAuth('JWT-auth')
@@ -32,8 +33,9 @@ export class AdminMoviesController {
     description: 'The movie has been successfully created.',
   })
   @ApiResponse({ status: 400, description: 'Bad Request.' })
-  create(@Body() createMovieDto: CreateMovieDto) {
-    return this.moviesService.create(createMovieDto);
+  async create(@Body() createMovieDto: CreateMovieDto) {
+    const result = await this.moviesService.create(createMovieDto);
+    return ApiResponseData.ok(result, 'Movie created successfully', 201);
   }
 
   @Get()
@@ -42,16 +44,18 @@ export class AdminMoviesController {
     status: 200,
     description: 'Return all movies with pagination.',
   })
-  findAll(@Query() query: FindAllMoviesDto) {
-    return this.moviesService.findAll(query);
+  async findAll(@Query() query: FindAllMoviesDto) {
+    const result = await this.moviesService.findAll(query);
+    return ApiResponseData.ok(result, 'Movies retrieved successfully');
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get movie by id' })
   @ApiResponse({ status: 200, description: 'Return the movie.' })
   @ApiResponse({ status: 404, description: 'Movie not found.' })
-  findOne(@Param('id') id: string) {
-    return this.moviesService.findOne(id);
+  async findOne(@Param('id') id: string) {
+    const result = await this.moviesService.findOne(id);
+    return ApiResponseData.ok(result, 'Movie retrieved successfully');
   }
 
   @Patch(':id')
@@ -61,8 +65,12 @@ export class AdminMoviesController {
     description: 'The movie has been successfully updated.',
   })
   @ApiResponse({ status: 404, description: 'Movie not found.' })
-  update(@Param('id') id: string, @Body() updateMovieDto: UpdateMovieDto) {
-    return this.moviesService.update(id, updateMovieDto);
+  async update(
+    @Param('id') id: string,
+    @Body() updateMovieDto: UpdateMovieDto,
+  ) {
+    const result = await this.moviesService.update(id, updateMovieDto);
+    return ApiResponseData.ok(result, 'Movie updated successfully');
   }
 
   @Delete(':id')
@@ -72,7 +80,8 @@ export class AdminMoviesController {
     description: 'The movie has been successfully deleted.',
   })
   @ApiResponse({ status: 404, description: 'Movie not found.' })
-  remove(@Param('id') id: string) {
-    return this.moviesService.remove(id);
+  async remove(@Param('id') id: string) {
+    await this.moviesService.remove(id);
+    return ApiResponseData.ok(true, 'Movie deleted successfully');
   }
 }

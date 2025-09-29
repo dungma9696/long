@@ -16,6 +16,7 @@ import {
 import { GenresService } from './genres.service';
 import { CreateGenreDto } from './dto/create-genre.dto';
 import { UpdateGenreDto } from './dto/update-genre.dto';
+import { ApiResponseData } from 'src/common/bases/api-response';
 
 @ApiTags('Admin - Genres')
 @ApiBearerAuth('JWT-auth')
@@ -30,23 +31,26 @@ export class AdminGenresController {
     description: 'The genre has been successfully created.',
   })
   @ApiResponse({ status: 400, description: 'Bad Request.' })
-  create(@Body() createGenreDto: CreateGenreDto) {
-    return this.genresService.create(createGenreDto);
+  async create(@Body() createGenreDto: CreateGenreDto) {
+    const result = await this.genresService.create(createGenreDto);
+    return ApiResponseData.ok(result, 'Genre created successfully', 201);
   }
 
   @Get()
   @ApiOperation({ summary: 'Get all genres (including inactive)' })
   @ApiResponse({ status: 200, description: 'Return all genres.' })
-  findAll() {
-    return this.genresService.findAllForAdmin();
+  async findAll() {
+    const result = await this.genresService.findAllForAdmin();
+    return ApiResponseData.ok(result, 'Genres retrieved successfully');
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get genre by id' })
   @ApiResponse({ status: 200, description: 'Return the genre.' })
   @ApiResponse({ status: 404, description: 'Genre not found.' })
-  findOne(@Param('id') id: string) {
-    return this.genresService.findOne(id);
+  async findOne(@Param('id') id: string) {
+    const result = await this.genresService.findOne(id);
+    return ApiResponseData.ok(result, 'Genre retrieved successfully');
   }
 
   @Patch(':id')
@@ -56,8 +60,12 @@ export class AdminGenresController {
     description: 'The genre has been successfully updated.',
   })
   @ApiResponse({ status: 404, description: 'Genre not found.' })
-  update(@Param('id') id: string, @Body() updateGenreDto: UpdateGenreDto) {
-    return this.genresService.update(id, updateGenreDto);
+  async update(
+    @Param('id') id: string,
+    @Body() updateGenreDto: UpdateGenreDto,
+  ) {
+    const result = await this.genresService.update(id, updateGenreDto);
+    return ApiResponseData.ok(result, 'Genre updated successfully');
   }
 
   @Delete(':id')
@@ -67,8 +75,9 @@ export class AdminGenresController {
     description: 'The genre has been successfully deleted.',
   })
   @ApiResponse({ status: 404, description: 'Genre not found.' })
-  remove(@Param('id') id: string) {
-    return this.genresService.remove(id);
+  async remove(@Param('id') id: string) {
+    await this.genresService.remove(id);
+    return ApiResponseData.ok(true, 'Genre deleted successfully');
   }
 
   @Patch(':id/soft-delete')
@@ -78,7 +87,8 @@ export class AdminGenresController {
     description: 'The genre has been successfully deactivated.',
   })
   @ApiResponse({ status: 404, description: 'Genre not found.' })
-  softDelete(@Param('id') id: string) {
-    return this.genresService.softDelete(id);
+  async softDelete(@Param('id') id: string) {
+    await this.genresService.softDelete(id);
+    return ApiResponseData.ok(true, 'Genre deactivated successfully');
   }
 }

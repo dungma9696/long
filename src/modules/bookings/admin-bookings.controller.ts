@@ -8,6 +8,7 @@ import {
 import { BookingsService } from './bookings.service';
 import { UpdateBookingDto } from './dto/update-booking.dto';
 import { FindAllBookingsDto } from './dto/find-all-bookings.dto';
+import { ApiResponseData } from 'src/common/bases/api-response';
 
 @ApiTags('Admin - Bookings')
 @ApiBearerAuth('JWT-auth')
@@ -21,16 +22,18 @@ export class AdminBookingsController {
     status: 200,
     description: 'Return all bookings with pagination.',
   })
-  findAll(@Query() query: FindAllBookingsDto) {
-    return this.bookingsService.findAll(query);
+  async findAll(@Query() query: FindAllBookingsDto) {
+    const result = await this.bookingsService.findAll(query);
+    return ApiResponseData.ok(result, 'Bookings retrieved successfully');
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get booking by id' })
   @ApiResponse({ status: 200, description: 'Return the booking.' })
   @ApiResponse({ status: 404, description: 'Booking not found.' })
-  findOne(@Param('id') id: string) {
-    return this.bookingsService.findOne(id);
+  async findOne(@Param('id') id: string) {
+    const result = await this.bookingsService.findOne(id);
+    return ApiResponseData.ok(result, 'Booking retrieved successfully');
   }
 
   @Patch(':id')
@@ -40,8 +43,12 @@ export class AdminBookingsController {
     description: 'The booking has been successfully updated.',
   })
   @ApiResponse({ status: 404, description: 'Booking not found.' })
-  update(@Param('id') id: string, @Body() updateBookingDto: UpdateBookingDto) {
-    return this.bookingsService.update(id, updateBookingDto);
+  async update(
+    @Param('id') id: string,
+    @Body() updateBookingDto: UpdateBookingDto,
+  ) {
+    const result = await this.bookingsService.update(id, updateBookingDto);
+    return ApiResponseData.ok(result, 'Booking updated successfully');
   }
 
   @Patch(':id/payment-status')
@@ -51,7 +58,14 @@ export class AdminBookingsController {
     description: 'The booking payment status has been successfully updated.',
   })
   @ApiResponse({ status: 404, description: 'Booking not found.' })
-  updatePaymentStatus(@Param('id') id: string, @Body('status') status: string) {
-    return this.bookingsService.updatePaymentStatus(id, status);
+  async updatePaymentStatus(
+    @Param('id') id: string,
+    @Body('status') status: string,
+  ) {
+    const result = await this.bookingsService.updatePaymentStatus(id, status);
+    return ApiResponseData.ok(
+      result,
+      'Booking payment status updated successfully',
+    );
   }
 }
