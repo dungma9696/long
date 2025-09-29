@@ -18,13 +18,10 @@ export class CreateRoomDto {
   roomLayout: string;
 
   @ApiProperty({
-    description: '2D array representing current seat layout',
-    type: [String],
-    isArray: true,
+    description: 'String representing current seat layout',
   })
-  @IsArray()
-  @IsArray({ each: true })
-  seatLayout: string[][];
+  @IsString()
+  seatLayout: string;
 
   @ApiProperty({ description: 'Room format (2D, 3D, IMAX)', required: false })
   @IsOptional()

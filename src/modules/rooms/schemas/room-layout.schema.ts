@@ -20,8 +20,8 @@ export class RoomLayout {
   @Prop({ type: Number, default: 0 })
   coupleSeat: number;
 
-  @Prop({ type: [[String]], required: true })
-  seatLayout: string[][]; // 2D array representing seat positions
+  @Prop({ type: String, required: true })
+  seatLayout: string; // String representing seat layout
 }
 
 export const RoomLayoutSchema = SchemaFactory.createForClass(RoomLayout);

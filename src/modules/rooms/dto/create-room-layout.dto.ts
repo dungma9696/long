@@ -35,11 +35,8 @@ export class CreateRoomLayoutDto {
   coupleSeat?: number = 0;
 
   @ApiProperty({
-    description: '2D array representing seat layout',
-    type: [String],
-    isArray: true,
+    description: 'String representing seat layout',
   })
-  @IsArray()
-  @IsArray({ each: true })
-  seatLayout: string[][];
+  @IsString()
+  seatLayout: string;
 }
