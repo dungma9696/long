@@ -2,11 +2,12 @@ import {
   IsString,
   IsOptional,
   IsDateString,
-  IsNumber,
   IsMongoId,
-  Min,
+  ValidateNested,
 } from 'class-validator';
+import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
+import { PricingDto } from './pricing.dto';
 
 export class CreateShowtimeDto {
   @ApiProperty({ description: 'Movie ID' })
@@ -38,10 +39,13 @@ export class CreateShowtimeDto {
   @IsMongoId()
   discount?: string;
 
-  @ApiProperty({ description: 'Ticket price' })
-  @IsNumber()
-  @Min(0)
-  price: number;
+  @ApiProperty({
+    description: 'Pricing for different seat types',
+    type: PricingDto,
+  })
+  @ValidateNested()
+  @Type(() => PricingDto)
+  pricing: PricingDto;
 
   @ApiProperty({
     description: 'Showtime status',

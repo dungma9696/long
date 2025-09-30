@@ -23,9 +23,10 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 
 import { CacheModule } from '@nestjs/cache-manager';
-import KeyvRedis, { createKeyv } from '@keyv/redis';
+import { createKeyv } from '@keyv/redis';
 import { Keyv } from 'keyv';
 import { CacheableMemory } from 'cacheable';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -43,9 +44,10 @@ import { CacheableMemory } from 'cacheable';
     LoyaltyPointsModule,
     RolesModule,
     ConfigModule.forRoot({ isGlobal: true }),
+    ScheduleModule.forRoot(),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
+      useFactory: (configService: ConfigService) => ({
         uri: configService.get<string>('MONGODB_URI'),
       }),
       inject: [ConfigService],
@@ -53,7 +55,7 @@ import { CacheableMemory } from 'cacheable';
     MailerModule.forRootAsync({
       imports: [ConfigModule],
 
-      useFactory: async (configService: ConfigService) => ({
+      useFactory: (configService: ConfigService) => ({
         transport: {
           host: 'smtp.gmail.com',
           port: 465,
@@ -81,7 +83,7 @@ import { CacheableMemory } from 'cacheable';
     }),
     CacheModule.registerAsync({
       isGlobal: true,
-      useFactory: async () => {
+      useFactory: () => {
         return {
           stores: [
             new Keyv({

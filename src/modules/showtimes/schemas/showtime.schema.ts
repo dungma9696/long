@@ -26,8 +26,19 @@ export class Showtime {
   @Prop({ type: Types.ObjectId, ref: 'Discount' })
   discount?: Types.ObjectId;
 
-  @Prop({ type: Number, required: true })
-  price: number;
+  @Prop({
+    type: {
+      regular: { type: Number, required: true },
+      vip: { type: Number, required: true },
+      couple: { type: Number, required: true },
+    },
+    required: true,
+  })
+  pricing: {
+    regular: number;
+    vip: number;
+    couple: number;
+  };
 
   @Prop({ type: String, default: 'active' })
   status: string;
