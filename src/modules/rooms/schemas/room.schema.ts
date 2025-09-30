@@ -12,9 +12,6 @@ export class Room {
   @Prop({ type: Types.ObjectId, ref: 'RoomLayout', required: true })
   roomLayout: Types.ObjectId;
 
-  @Prop({ type: String, required: true })
-  seatLayout: string; // Current seat configuration
-
   @Prop()
   format?: string; // 2D, 3D, IMAX
 

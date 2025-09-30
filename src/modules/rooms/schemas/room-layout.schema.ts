@@ -21,7 +21,7 @@ export class RoomLayout {
   coupleSeat: number;
 
   @Prop({ type: String, required: true })
-  seatLayout: string; // String representing seat layout
+  seatLayout: string;
 }
 
 export const RoomLayoutSchema = SchemaFactory.createForClass(RoomLayout);
