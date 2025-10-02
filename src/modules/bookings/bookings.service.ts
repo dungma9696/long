@@ -32,7 +32,7 @@ export class BookingsService {
     let totalAmount = seatsTotal + comboTotal;
 
     // Apply discount if provided
-    let discountAmount = 0;
+    const discountAmount = 0;
     if (discount) {
       // Here you would fetch discount details and calculate discount amount
       // For now, we'll assume no discount calculation
@@ -61,17 +61,15 @@ export class BookingsService {
     return createdBooking.save();
   }
 
-  async findAll(
-    query: FindAllBookingsDto,
-  ): Promise<{
+  async findAll(query: FindAllBookingsDto): Promise<{
     bookings: Booking[];
     total: number;
-    page: number;
-    limit: number;
+    current: number;
+    pageSize: number;
   }> {
     const {
-      page = 1,
-      limit = 10,
+      current = 1,
+      pageSize = 10,
       userId,
       showtimeId,
       paymentStatus,
@@ -101,7 +99,7 @@ export class BookingsService {
     const sort: any = {};
     sort[sortBy] = sortOrder === 'asc' ? 1 : -1;
 
-    const skip = (page - 1) * limit;
+    const skip = (current - 1) * pageSize;
 
     const [bookings, total] = await Promise.all([
       this.bookingModel
@@ -111,7 +109,7 @@ export class BookingsService {
         .populate('discount', 'name code percent')
         .sort(sort)
         .skip(skip)
-        .limit(limit)
+        .limit(pageSize)
         .exec(),
       this.bookingModel.countDocuments(filter).exec(),
     ]);
@@ -119,8 +117,8 @@ export class BookingsService {
     return {
       bookings,
       total,
-      page,
-      limit,
+      current,
+      pageSize,
     };
   }
 

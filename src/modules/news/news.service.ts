@@ -20,12 +20,15 @@ export class NewsService {
     return createdNews.save();
   }
 
-  async findAll(
-    query: FindAllNewsDto,
-  ): Promise<{ news: News[]; total: number; page: number; limit: number }> {
+  async findAll(query: FindAllNewsDto): Promise<{
+    news: News[];
+    total: number;
+    current: number;
+    pageSize: number;
+  }> {
     const {
-      page = 1,
-      limit = 10,
+      current = 1,
+      pageSize = 10,
       search,
       status,
       tag,
@@ -53,7 +56,7 @@ export class NewsService {
     const sort: any = {};
     sort[sortBy] = sortOrder === 'asc' ? 1 : -1;
 
-    const skip = (page - 1) * limit;
+    const skip = (current - 1) * pageSize;
 
     const [news, total] = await Promise.all([
       this.newsModel
@@ -62,7 +65,7 @@ export class NewsService {
         .populate('imageId')
         .sort(sort)
         .skip(skip)
-        .limit(limit)
+        .limit(pageSize)
         .exec(),
       this.newsModel.countDocuments(filter).exec(),
     ]);
@@ -70,8 +73,8 @@ export class NewsService {
     return {
       news,
       total,
-      page,
-      limit,
+      current,
+      pageSize,
     };
   }
 

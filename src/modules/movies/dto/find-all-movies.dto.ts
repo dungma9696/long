@@ -4,19 +4,27 @@ import { Transform } from 'class-transformer';
 import { MovieStatus } from '../../../enums/movie-status.enum';
 
 export class FindAllMoviesDto {
-  @ApiProperty({ description: 'Page number', required: false, default: 1 })
+  @ApiProperty({
+    description: 'Current page number',
+    required: false,
+    default: 1,
+  })
   @IsOptional()
   @Transform(({ value }) => parseInt(value))
   @IsNumber()
   @Min(1)
-  page?: number = 1;
+  current?: number = 1;
 
-  @ApiProperty({ description: 'Items per page', required: false, default: 10 })
+  @ApiProperty({
+    description: 'Page size',
+    required: false,
+    default: 10,
+  })
   @IsOptional()
   @Transform(({ value }) => parseInt(value))
   @IsNumber()
   @Min(1)
-  limit?: number = 10;
+  pageSize?: number = 10;
 
   @ApiProperty({ description: 'Search by movie name', required: false })
   @IsOptional()

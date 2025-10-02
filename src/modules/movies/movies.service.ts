@@ -17,12 +17,15 @@ export class MoviesService {
     return createdMovie.save();
   }
 
-  async findAll(
-    query: FindAllMoviesDto,
-  ): Promise<{ movies: Movie[]; total: number; page: number; limit: number }> {
+  async findAll(query: FindAllMoviesDto): Promise<{
+    movies: Movie[];
+    total: number;
+    current: number;
+    pageSize: number;
+  }> {
     const {
-      page = 1,
-      limit = 10,
+      current = 1,
+      pageSize = 10,
       search,
       status,
       genreId,
@@ -47,7 +50,7 @@ export class MoviesService {
     const sort: any = {};
     sort[sortBy] = sortOrder === 'asc' ? 1 : -1;
 
-    const skip = (page - 1) * limit;
+    const skip = (current - 1) * pageSize;
 
     const [movies, total] = await Promise.all([
       this.movieModel
@@ -56,7 +59,7 @@ export class MoviesService {
         .populate('posterId')
         .sort(sort)
         .skip(skip)
-        .limit(limit)
+        .limit(pageSize)
         .exec(),
       this.movieModel.countDocuments(filter).exec(),
     ]);
@@ -64,8 +67,8 @@ export class MoviesService {
     return {
       movies,
       total,
-      page,
-      limit,
+      current,
+      pageSize,
     };
   }
 

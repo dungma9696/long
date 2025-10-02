@@ -35,12 +35,12 @@ export class ShowtimesService {
   async findAll(query: FindAllShowtimesDto): Promise<{
     showtimes: Showtime[];
     total: number;
-    page: number;
-    limit: number;
+    current: number;
+    pageSize: number;
   }> {
     const {
-      page = 1,
-      limit = 10,
+      current = 1,
+      pageSize = 10,
       movieId,
       cinema,
       date,
@@ -73,7 +73,7 @@ export class ShowtimesService {
     const sort: any = {};
     sort[sortBy] = sortOrder === 'asc' ? 1 : -1;
 
-    const skip = (page - 1) * limit;
+    const skip = (current - 1) * pageSize;
 
     const [showtimes, total] = await Promise.all([
       this.showtimeModel
@@ -83,7 +83,7 @@ export class ShowtimesService {
         .populate('discount', 'name code percent')
         .sort(sort)
         .skip(skip)
-        .limit(limit)
+        .limit(pageSize)
         .exec(),
       this.showtimeModel.countDocuments(filter).exec(),
     ]);
@@ -91,8 +91,8 @@ export class ShowtimesService {
     return {
       showtimes,
       total,
-      page,
-      limit,
+      current,
+      pageSize,
     };
   }
 
